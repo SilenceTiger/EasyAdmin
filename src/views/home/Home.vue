@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <h1>视图切换区域</h1>
-    <!-- <div class="tree-container">
+    <!-- <h1>视图切换区域</h1> -->
+    <div class="tree-container">
       <Tree :data="treeData"></Tree>
     </div>
     <div class="list-container">
@@ -9,18 +9,18 @@
       <div class="table-wrap">
         <Table border :columns="columns7" :data="data6"></Table>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
 <script>
-//import { fetchTree } from "@/api/home";
+import { fetchTree } from "@/api/home";
 export default {
   name: "home",
   created() {
-    // fetchTree().then(response => {
-    //   this.treeData = response;
-    // });
+    fetchTree().then(response => {
+      this.treeData = response;
+    });
   },
   data() {
     return {
