@@ -5,7 +5,26 @@
       <Tree :data="treeData"></Tree>
     </div>
     <div class="list-container">
-      <div class="query-wrap"></div>
+      <div class="query-wrap">
+        <div class="row">
+          <div class="form-label">
+            <label>名称</label>
+          </div>
+          <div class="form-component">
+            <Input class="width-100" v-model="value" placeholder="Enter something..."/>
+          </div>
+          <div class="form-label">
+            <label>城市</label>
+          </div>
+          <div class="form-component">
+            <Input class="width-100" v-model="value" placeholder="Enter something..."/>
+          </div>
+        </div>
+        <div class="query-btn-wrap">
+          <Button type="primary">查询</Button>
+          <Button class="mgl-20">清空</Button>
+        </div>
+      </div>
       <div class="table-wrap">
         <Table border :columns="columns7" :data="data6"></Table>
       </div>
@@ -141,16 +160,27 @@ export default {
     width: 220px;
     height: 100%;
     padding: 5px 10px;
+    background: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   }
   .list-container {
-    margin-left: 220px;
+    margin-left: 230px;
     height: 100%;
     .query-wrap {
-      min-height: 80px;
-      background: #eee;
+      height: 64px;
+      background: #fff;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      position: relative;
+      padding-right: 200px;
+      .query-btn-wrap {
+        position: absolute;
+        right: 10px;
+        bottom: 15px;
+      }
     }
     .table-wrap {
-      min-height: 400px;
+      margin-top: 10px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     }
   }
 }

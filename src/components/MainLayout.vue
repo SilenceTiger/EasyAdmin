@@ -90,6 +90,7 @@ export default {
     .view-wrap {
       height: calc(100% - 80px);
       padding: 10px;
+      background: #fbfdfb;
     }
   }
 }

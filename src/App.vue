@@ -12,6 +12,7 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
   box-sizing: border-box;
   font-family: "PingFang SC", "Helvetica Neue", Helvetica, "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
