@@ -6,6 +6,7 @@ import store from './store'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 
+import './style/parcoords.css';  //平行坐标样式 新增的dom 如果使用scoped 样式会不生效只有放在全局
 import './style/common.less' //共有样式
 
 /**

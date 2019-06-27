@@ -27,6 +27,9 @@
       </div>
       <div class="table-wrap">
         <Table border :columns="columns7" :data="data6"></Table>
+        <div class="pagination">
+          <Page :total="100" show-elevator/>
+        </div>
       </div>
     </div>
   </div>
@@ -43,6 +46,7 @@ export default {
   },
   data() {
     return {
+      value: "",
       treeData: [],
       columns7: [
         {
@@ -181,6 +185,12 @@ export default {
     .table-wrap {
       margin-top: 10px;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      .pagination {
+        height: 40px;
+        background: #fff;
+        padding:3px 10px 0 0;
+        text-align: right;
+      }
     }
   }
 }

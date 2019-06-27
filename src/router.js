@@ -49,6 +49,40 @@ export const routesData = [
     ]
   },
   {
+    path: '/',
+    name: '组件通信',
+    redirect: 'normal',
+    component: MainLayout,
+    meta: {
+      icon: 'ios-home-outline'
+    },
+    children: [{
+      path: 'props',
+      name: 'props',
+      component: () => import('@/views/componentsCommunication/PropsWay')
+    },{
+      path: 'eventBus',
+      name: 'eventBus',
+      component: () => import('@/views/componentsCommunication/PropsWay')
+    },{
+      path: 'vuex',
+      name: 'vuex',
+      component: () => import('@/views/componentsCommunication/PropsWay')
+    },{
+      path: 'provideInject',
+      name: 'provide&inject',
+      component: () => import('@/views/componentsCommunication/PropsWay')
+    },{
+      path: 'observer',
+      name: '观察者',
+      component: () => import('@/views/componentsCommunication/ObserverWay')
+    },{
+      path: 'other',
+      name: '其他',
+      component: () => import('@/views/componentsCommunication/ObserverWay')
+    }],
+  },
+  {
     path: '/parallelCoordinate',
     name: '平行坐标',
     component: MainLayout,
@@ -64,6 +98,39 @@ export const routesData = [
         path: 'application',
         component: () => import('@/views/parallelCoordinate/Application'),
         name: '平行坐标应用',
+      }
+    ]
+  },
+  {
+    path: '/echarts',
+    name: 'echarts',
+    component: MainLayout,
+    meta: {
+      icon: 'ios-stats-outline'
+    },
+    children: [{
+        path: 'baseChart',
+        component: () => import('@/views/echarts/BaseChart'),
+        name: 'base chart',
+      },
+      {
+        path: 'glChart',
+        component: () => import('@/views/echarts/GlChart'),
+        name: 'gl chart',
+      }
+    ]
+  },
+  {
+    path: '/map',
+    name: 'map11',
+    component: MainLayout,
+    meta: {
+      icon: 'ios-stats-outline'
+    },
+    children: [{
+        path: 'basemap',
+        component: () => import('@/views/map/BaseMap'),
+        name: 'GaoDeMap',
       }
     ]
   }

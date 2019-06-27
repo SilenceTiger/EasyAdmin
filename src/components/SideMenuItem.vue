@@ -6,7 +6,7 @@
       <template v-if="hasOneChild(item)">
         <MenuItem :key="item.name" :name="item.name" @click.native="switchView(item)">
           <Icon :type="item.meta.icon" v-if="item.meta && item.meta.icon"/>
-          {{item.name}}
+          {{item.children[0].name}}
         </MenuItem>
       </template>
 
@@ -43,7 +43,11 @@ export default {
       return item.children && item.children.length == 1;
     },
     switchView(item) {
-      this.$router.push({ name: item.name });
+      let routeName = item.name;
+      if(this.hasOneChild(item)) {
+        routeName = item.children[0].name;
+      }
+      this.$router.push({ name: routeName });
     }
   }
 };
