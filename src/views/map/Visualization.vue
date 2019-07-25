@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="operate-wrap">
-      <Button class="margin-right-10">平行坐标配置</Button>
-      <Button class="margin-right-10">聚类配置</Button>
+      <Button class="margin-right-10" @click="parcoordsSetting">平行坐标配置</Button>
+      <Button class="margin-right-10" @click="clusterSetting">聚类配置</Button>
       <Button @click="reset">重置</Button>
     </div>
 
@@ -25,6 +25,28 @@
         </div>
       </split-pane>
     </div>
+
+    <Modal
+      v-model="showParcoordsSetting"
+      draggable
+      footer-hide
+      title="平行坐标配置"
+      @on-ok="submitParcoordsSetting"
+    >
+      <ParcoordsSetting
+        :parcoordsSettingObj="parcoordsSettingObj"
+        @submit-event="parcoordsSettingSubmit"
+        @cancel-event="parcoordsSettingCancel"
+      />
+    </Modal>
+
+    <Modal
+      v-model="showClusterSetting"
+      draggable
+      footer-hide
+      title="聚类配置"
+      @on-ok="submitClusterSetting"
+    >22222222222</Modal>
   </div>
 </template>
 <script>
@@ -44,18 +66,7 @@ import {
 import KMeans from "@/libs/kmeans";
 import { setTimeout } from "timers";
 
-let showDimensions = [
-  "unitPrice",
-  "area",
-  "totalPrice",
-  "propertyFee",
-  "bedroomNum",
-  "medicalScore",
-  "educationScore",
-  "businessScore",
-  "trafficScore",
-  "propertyScore"
-];
+import ParcoordsSetting from "./ParcoordsSetting";
 
 let parcoords;
 
@@ -77,18 +88,38 @@ let parcoords;
 export default {
   name: "BaseMap",
   components: {
-    SplitPane
+    SplitPane,
+    ParcoordsSetting
   },
   data() {
     return {
       //layout
       offset: 0.7,
       offsetVertical: "300px",
-
       //parallel coordinate
-
+      parcoordsSettingObj: {
+        brushMode: "1D-axes",
+        brushedColor: "#EA0000",
+        dimensionsShow: [
+          "unitPrice",
+          "area",
+          "totalPrice",
+          "propertyFee",
+          "bedroomNum",
+          "medicalScore",
+          "educationScore",
+          "businessScore",
+          "trafficScore",
+          "propertyScore"
+        ],
+        useCurve: true,
+        reorderable: true
+      },
+      //modal
+      showParcoordsSetting: false,
+      showClusterSetting: false,
       //table
-      tableHeight:400, 
+      tableHeight: 400,
       tableHead: [],
       tableBody: []
     };
@@ -169,7 +200,7 @@ export default {
     renderParcoords() {
       parcoords = ParCoords()("#parcoords").alpha(0.4);
       let dimensions = {};
-      showDimensions.forEach(item => {
+      this.parcoordsSettingObj.dimensionsShow.forEach(item => {
         dimensions[item] = {
           title: DIMENSION_MAP[item]
         };
@@ -188,13 +219,13 @@ export default {
         .shadows()
         .reorderable()
         .brushMode("1D-axes")
+        .brushedColor("#EA0000")
         .render();
       this.setScale();
     },
-
     setScale() {
       //每一个轴的范围从 0.9 * min ~ 1.1 * max
-      showDimensions.forEach(item => {
+      this.parcoordsSettingObj.dimensionsShow.forEach(item => {
         let min = d3.min(HOUSE_DATA, function(d) {
           return d[item];
         });
@@ -259,6 +290,31 @@ export default {
       });
       this.tableHead = _tableHead;
       this.tableBody = _tableBody;
+    },
+
+    parcoordsSetting() {
+      this.showParcoordsSetting = true;
+    },
+
+    parcoordsSettingSubmit(params) {
+      console.log(params)
+      this.showParcoordsSetting = false;
+    },
+
+    parcoordsSettingCancel() {
+      this.showParcoordsSetting = false;
+    },
+
+    clusterSetting() {
+      this.showClusterSetting = true;
+    },
+
+    submitParcoordsSetting() {
+      this.$Message.info("设置成功！");
+    },
+
+    submitClusterSetting() {
+      this.$Message.info("设置成功！");
     },
 
     reset() {
