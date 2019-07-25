@@ -122,15 +122,15 @@ export const routesData = [
   },
   {
     path: '/map',
-    name: 'map11',
+    name: 'visualization',
     component: MainLayout,
     meta: {
       icon: 'ios-stats-outline'
     },
     children: [{
-        path: 'basemap',
-        component: () => import('@/views/map/BaseMap'),
-        name: 'GaoDeMap',
+        path: 'visualization',
+        component: () => import('@/views/map/Visualization'),
+        name: '房产可视分析demo',
       }
     ]
   }

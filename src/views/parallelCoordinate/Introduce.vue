@@ -17,9 +17,11 @@ export default {
         [3, -3, 9, 6, 0.33, 1],
         [4, -4, 16, 8, 0.25, 1]
       ])
-      .render()
-      .createAxes();
-    console.log(parcoords)
+  
+      .shadows()
+      .reorderable()
+      .brushMode("1D-axes") // enable brushing
+          .render()
   },
   data() {
     return {};
