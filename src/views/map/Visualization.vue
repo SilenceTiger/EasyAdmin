@@ -14,7 +14,14 @@
               <div id="parcoords" class="parcoords"></div>
             </div>
             <div slot="bottom" class="pane bottom-pane">
-              <Table :height="tableHeight" border :columns="tableHead" :data="tableBody"></Table>
+              <Table
+                highlight-row
+                @on-current-change="tableRowClick"
+                :height="tableHeight"
+                border
+                :columns="tableHead"
+                :data="tableBody"
+              ></Table>
             </div>
             <div slot="trigger" class="custom-trigger"></div>
           </split-pane>
@@ -218,6 +225,7 @@ export default {
       }
       parcoords.brushReset();
       this.setScale();
+      this.bindParcoordsEvent();
     },
     setScale() {
       //每一个轴的范围从 0.9 * min ~ 1.1 * max
@@ -237,6 +245,17 @@ export default {
         }
       });
     },
+    bindParcoordsEvent() {
+      parcoords.on("brush", function(data) {
+        //console.log(data);
+        //处理地图上的marker
+      });
+
+      parcoords.on("highlight", function(data) {
+        console.log(data)
+      });
+    },
+
     renderTable() {
       let _tableHead = [];
       let _tableBody = [];
@@ -294,6 +313,9 @@ export default {
       this.tableHead = _tableHead;
       this.tableBody = _tableBody;
     },
+    tableRowClick(currentRow, oldCurrentRow) {
+      console.log(currentRow);
+    },
     located(params) {
       let location = [params.row.lng, params.row.lat];
       //map.setCenter(location); //设置地图中心点
@@ -329,9 +351,9 @@ export default {
       let _data = [];
       HOUSE_DATA.forEach(item => {
         let temp = [];
-        dimensions.forEach((obj) => {
-          temp.push(item[obj])
-        })
+        dimensions.forEach(obj => {
+          temp.push(item[obj]);
+        });
         _data.push(temp);
       });
       //console.log(_data)
