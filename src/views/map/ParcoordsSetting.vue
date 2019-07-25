@@ -42,7 +42,7 @@
 <script>
 import { PROPS_MAP } from "./houseData.js";
 export default {
-  name: "ParcoordsSeting",
+  name: "ParcoordsSetting",
   mounted() {
     this.formItem = this.parcoordsSettingObj
   },

@@ -26,13 +26,7 @@
       </split-pane>
     </div>
 
-    <Modal
-      v-model="showParcoordsSetting"
-      draggable
-      footer-hide
-      title="平行坐标配置"
-      @on-ok="submitParcoordsSetting"
-    >
+    <Modal v-model="showParcoordsSetting" draggable footer-hide title="平行坐标配置">
       <ParcoordsSetting
         :parcoordsSettingObj="parcoordsSettingObj"
         @submit-event="parcoordsSettingSubmit"
@@ -40,13 +34,13 @@
       />
     </Modal>
 
-    <Modal
-      v-model="showClusterSetting"
-      draggable
-      footer-hide
-      title="聚类配置"
-      @on-ok="submitClusterSetting"
-    >22222222222</Modal>
+    <Modal v-model="showClusterSetting" draggable footer-hide title="聚类配置">
+      <ClusterSetting
+        :clusterSettingObj="clusterSettingObj"
+        @submit-event="clusterSettingSubmit"
+        @cancel-event="clusterSettingCancel"
+      />
+    </Modal>
   </div>
 </template>
 <script>
@@ -67,29 +61,16 @@ import KMeans from "@/libs/kmeans";
 import { setTimeout } from "timers";
 
 import ParcoordsSetting from "./ParcoordsSetting";
+import ClusterSetting from "./ClusterSetting";
 
-let parcoords;
-
-// var data = [[6, 5], [9, 10], [10, 8], [5, 5], [1, 2], [2, 2]];
-
-// var kmeans = KMeans({
-//   data: data,
-//   k: 3
-// });
-
-// kmeans.on("iteration", function(self) {});
-
-// kmeans.on("end", function(self) {
-//   console.log(self);
-// });
-
-// kmeans.run();
+let parcoords, map;
 
 export default {
   name: "BaseMap",
   components: {
     SplitPane,
-    ParcoordsSetting
+    ParcoordsSetting,
+    ClusterSetting
   },
   data() {
     return {
@@ -115,6 +96,10 @@ export default {
         useCurve: true,
         reorderable: true
       },
+      clusterSettingObj: {
+        k: 3,
+        clusterDimensions: []
+      },
       //modal
       showParcoordsSetting: false,
       showClusterSetting: false,
@@ -127,7 +112,7 @@ export default {
 
   methods: {
     renderMap() {
-      var map = new AMap.Map("map-container", {
+      map = new AMap.Map("map-container", {
         zoom: 12, //级别
         center: COMPANY_LOCATION, //中心点坐标
         pitch: 60, // 地图俯仰角度，有效范围 0 度- 83 度
@@ -169,7 +154,7 @@ export default {
         });
         //event
         markerTemp.on("click", function(e) {
-          alert(1);
+          console.log(e);
         });
         markerTemp.on("mouseover", function(e) {
           // console.log("111");
@@ -198,6 +183,11 @@ export default {
       //console.log(e.atMin, e.atMax);
     },
     renderParcoords() {
+      //$("#parcoords").empty() 等价
+      let ele = document.getElementById("parcoords");
+      while (ele.hasChildNodes()) {
+        ele.removeChild(ele.firstChild);
+      }
       parcoords = ParCoords()("#parcoords").alpha(0.4);
       let dimensions = {};
       this.parcoordsSettingObj.dimensionsShow.forEach(item => {
@@ -207,7 +197,6 @@ export default {
       });
       parcoords
         .data(HOUSE_DATA)
-        .smoothness(0.2)
         .margin({
           top: 30,
           left: 50,
@@ -217,10 +206,17 @@ export default {
         .dimensions(dimensions)
         .composite("darker")
         .shadows()
-        .reorderable()
-        .brushMode("1D-axes")
-        .brushedColor("#EA0000")
+        .brushMode(this.parcoordsSettingObj.brushMode)
+        .brushedColor(this.parcoordsSettingObj.brushedColor)
         .render();
+
+      if (this.parcoordsSettingObj.reorderable) {
+        parcoords.reorderable();
+      }
+      if (this.parcoordsSettingObj.useCurve) {
+        parcoords.smoothness(0.2);
+      }
+      parcoords.brushReset();
       this.setScale();
     },
     setScale() {
@@ -235,7 +231,9 @@ export default {
         if (item.indexOf("Score") > -1) {
           parcoords.scale(item, [0, 10]);
         } else {
-          parcoords.scale(item, [0.9 * min, 1.1 * max]);
+          if (!isNaN(max)) {
+            parcoords.scale(item, [0.9 * min, 1.1 * max]);
+          }
         }
       });
     },
@@ -277,6 +275,11 @@ export default {
                 props: {
                   type: "primary",
                   size: "small"
+                },
+                on: {
+                  click: () => {
+                    this.located(params);
+                  }
                 }
               },
               "定位"
@@ -291,14 +294,21 @@ export default {
       this.tableHead = _tableHead;
       this.tableBody = _tableBody;
     },
-
+    located(params) {
+      let location = [params.row.lng, params.row.lat];
+      //map.setCenter(location); //设置地图中心点
+      //map.setZoom(location); //设置级别
+      map.setZoomAndCenter(17, location);
+    },
     parcoordsSetting() {
       this.showParcoordsSetting = true;
     },
 
     parcoordsSettingSubmit(params) {
-      console.log(params)
+      this.$Message.info("设置成功！");
+      this.parcoordsSettingObj = params;
       this.showParcoordsSetting = false;
+      this.renderParcoords();
     },
 
     parcoordsSettingCancel() {
@@ -309,12 +319,37 @@ export default {
       this.showClusterSetting = true;
     },
 
-    submitParcoordsSetting() {
-      this.$Message.info("设置成功！");
+    clusterSettingSubmit(params) {
+      this.showClusterSetting = false;
+      this.runKmeans(params.k, params.clusterDimensions);
     },
 
-    submitClusterSetting() {
-      this.$Message.info("设置成功！");
+    runKmeans(k, dimensions) {
+      //根据dimensions构造数据
+      let _data = [];
+      HOUSE_DATA.forEach(item => {
+        let temp = [];
+        dimensions.forEach((obj) => {
+          temp.push(item[obj])
+        })
+        _data.push(temp);
+      });
+      //console.log(_data)
+      //dimensions = ['area', 'price']
+      //var data = [[6, 5], [9, 10], [10, 8], [5, 5], [1, 2], [2, 2]];
+      let kmeans = KMeans({
+        data: _data,
+        k: 3
+      });
+      // kmeans.on("iteration", function(self) {});
+      kmeans.on("end", function(self) {
+        console.log(self);
+      });
+      kmeans.run();
+    },
+
+    clusterSettingCancel() {
+      this.showClusterSetting = false;
     },
 
     reset() {
