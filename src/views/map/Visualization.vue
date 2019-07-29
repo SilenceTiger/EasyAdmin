@@ -70,6 +70,26 @@ import { setTimeout } from "timers";
 import ParcoordsSetting from "./ParcoordsSetting";
 import ClusterSetting from "./ClusterSetting";
 
+const mockMarkers = [
+  {
+    name: "光谷同济医院",
+    lng: 114.466432,
+    lat: 30.485292
+  },
+  {
+    name: "武汉正蒙北辰幼儿园",
+    lng: 114.486475,
+    lat: 30.473889
+  },
+  {
+    name: "光谷生物园地铁站",
+    lng: 114.481326,
+    lat: 30.48706
+  }
+];
+
+const colors = ["red", "black", "yellow", "green", "blue", "pink"];
+
 let parcoords, map;
 
 export default {
@@ -162,6 +182,15 @@ export default {
         //event
         markerTemp.on("click", function(e) {
           console.log(e);
+          mockMarkers.forEach(obj => {
+            map.add(
+              new AMap.Marker({
+                position: new AMap.LngLat(obj.lng, obj.lat),
+                title: obj.name,
+                icon: "building.png" // Icon的图像
+              })
+            );
+          });
         });
         markerTemp.on("mouseover", function(e) {
           // console.log("111");
@@ -213,6 +242,13 @@ export default {
         .dimensions(dimensions)
         .composite("darker")
         .shadows()
+        .color(function(d) {
+          if (d.belong) {
+            return colors[d.belong];
+          } else {
+            return colors[0];
+          }
+        })
         .brushMode(this.parcoordsSettingObj.brushMode)
         .brushedColor(this.parcoordsSettingObj.brushedColor)
         .render();
@@ -246,13 +282,49 @@ export default {
       });
     },
     bindParcoordsEvent() {
+      var _this = this;
       parcoords.on("brush", function(data) {
-        //console.log(data);
+        // console.log(data);
+        _this.tableBody = data;
         //处理地图上的marker
+        map.clearMap();
+        let markList = [];
+        data.forEach(item => {
+          let markerTemp = new AMap.Marker({
+            position: new AMap.LngLat(item.lng, item.lat),
+            title: item.name
+          });
+          //event
+          markerTemp.on("click", function(e) {
+            console.log(e);
+            mockMarkers.forEach(obj => {
+              map.add(
+                new AMap.Marker({
+                  position: new AMap.LngLat(obj.lng, obj.lat),
+                  title: obj.name,
+                  icon: "building.png" // Icon的图像
+                })
+              );
+            });
+            //光谷同济医院  lng: 114.466432, lat: 30.485292
+            //武汉正蒙北辰幼儿园 lng: 114.486475, lat: 30.473889
+            //光谷生物园地铁站 lng: 114.481326, lat: 30.48706
+          });
+          markerTemp.on("mouseover", function(e) {
+            // console.log("111");
+          });
+          markerTemp.on("mouseout", function(e) {
+            // console.log("222");
+          });
+
+          markList.push(markerTemp);
+        });
+
+        map.add(markList);
       });
 
       parcoords.on("highlight", function(data) {
-        console.log(data)
+        //console.log(data)
       });
     },
 
@@ -314,7 +386,7 @@ export default {
       this.tableBody = _tableBody;
     },
     tableRowClick(currentRow, oldCurrentRow) {
-      console.log(currentRow);
+      parcoords.highlight([currentRow]);
     },
     located(params) {
       let location = [params.row.lng, params.row.lat];
@@ -347,6 +419,7 @@ export default {
     },
 
     runKmeans(k, dimensions) {
+      var _this = this;
       //根据dimensions构造数据
       let _data = [];
       HOUSE_DATA.forEach(item => {
@@ -361,11 +434,19 @@ export default {
       //var data = [[6, 5], [9, 10], [10, 8], [5, 5], [1, 2], [2, 2]];
       let kmeans = KMeans({
         data: _data,
-        k: 3
+        k: k
       });
       // kmeans.on("iteration", function(self) {});
+      //console.log(HOUSE_DATA);
       kmeans.on("end", function(self) {
-        console.log(self);
+        //根据self.assignments给颜色
+        HOUSE_DATA.forEach((item, index) => {
+          item.belong = self.assignments[index];
+        });
+        _this.tableBody = HOUSE_DATA;
+        // console.log(_this.tableBody)
+        _this.renderParcoords();
+        //_this.$nextTick();
       });
       kmeans.run();
     },
@@ -375,7 +456,12 @@ export default {
     },
 
     reset() {
-      parcoords && parcoords.brushReset();
+      // parcoords && parcoords.brushReset();
+      // parcoords && parcoords.unhighlight();
+      HOUSE_DATA.forEach((item, index) => {
+        item.belong = '';
+      });
+      this.renderParcoords();
     }
   },
 
