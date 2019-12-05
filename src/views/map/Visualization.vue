@@ -521,8 +521,9 @@ export default {
     }
   }
   .custom-trigger {
-    width: 20px;
+    width: 40px;
     height: 20px;
+    border-radius: 4px;
     background: url(../../imgs/common/dota2.png) no-repeat center;
     background-size: cover;
     position: absolute;

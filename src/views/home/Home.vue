@@ -37,12 +37,17 @@
 
 <script>
 import { fetchTree } from "@/api/home";
+import { fetchList } from "@/api/test";
+
 export default {
   name: "home",
   created() {
     fetchTree().then(response => {
       this.treeData = response;
     });
+    fetchList().then(res => {
+      console.log(res)
+    })
   },
   data() {
     return {

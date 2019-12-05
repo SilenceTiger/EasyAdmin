@@ -1,8 +1,8 @@
 import http from '@/utils/http'
-
+let proxyURL = '';
 export function fetchList() {
     return http({
-        url: '/api/get',
+        url: proxyURL + '/api/get',
         method: 'get'
     })
 }

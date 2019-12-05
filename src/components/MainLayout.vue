@@ -76,7 +76,7 @@ export default {
       background: url(../imgs/common/dota2.png) no-repeat center;
       background-size: cover;
       height: 60px;
-      width: 60px;
+      width: 120px;
       margin: 10px auto;
     }
   }
