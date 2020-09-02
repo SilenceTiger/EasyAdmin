@@ -131,7 +131,7 @@ export default {
       showParcoordsSetting: false,
       showClusterSetting: false,
       //table
-      tableHeight: 400,
+      tableHeight: 450,
       tableHead: [],
       tableBody: []
     };
@@ -284,7 +284,6 @@ export default {
     bindParcoordsEvent() {
       var _this = this;
       parcoords.on("brush", function(data) {
-        // console.log(data);
         _this.tableBody = data;
         //处理地图上的marker
         map.clearMap();
@@ -309,12 +308,6 @@ export default {
             //光谷同济医院  lng: 114.466432, lat: 30.485292
             //武汉正蒙北辰幼儿园 lng: 114.486475, lat: 30.473889
             //光谷生物园地铁站 lng: 114.481326, lat: 30.48706
-          });
-          markerTemp.on("mouseover", function(e) {
-            // console.log("111");
-          });
-          markerTemp.on("mouseout", function(e) {
-            // console.log("222");
           });
 
           markList.push(markerTemp);
@@ -482,7 +475,7 @@ export default {
     height: 100%;
   }
   .operate-wrap {
-    height: 40px;
+    height: 46px;
     padding: 5px 0;
   }
 }

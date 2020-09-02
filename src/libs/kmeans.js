@@ -350,4 +350,3 @@ Observable.size = function (col) {
 
 
 export default KMeans;
-

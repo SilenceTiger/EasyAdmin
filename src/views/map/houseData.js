@@ -151,7 +151,7 @@ export const HOUSE_DATA = [{
     name: '金地太阳城',
     lng: 114.412917,
     lat: 30.490259,
-    unitPrice: 233250,
+    unitPrice: 23320,
     area: 80,
     totalPrice: 18660000,
     bedroomNum: 2,

@@ -11,8 +11,6 @@
     "axios": "^0.18.0",
     "core-js": "^2.6.5",
     "d3": "^5.9.2",
-    "echarts": "^4.2.1",
-    "echarts-gl": "^1.1.1",
     "iview": "^3.4.1",
     "mockjs": "^1.0.1-beta3",
     "parcoord-es": "^2.2.9",
